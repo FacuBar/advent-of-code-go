@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	f, err := os.Open("day-1/data")
+	f, err := os.Open("01/data")
 	if err != nil {
 		panic("couldnt open file")
 	}
