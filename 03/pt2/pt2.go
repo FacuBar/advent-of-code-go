@@ -47,7 +47,7 @@ func getRating(binaries []string, isOxygen bool, response chan int64) {
 
 		newBinaries := make([]string, 0)
 
-		// At the begining just the most common binary is identified
+		// At the begining only the counting will be executed
 		if i == -1 {
 			for _, bits = range binaries {
 				switch bits[i+1] {
@@ -57,7 +57,7 @@ func getRating(binaries []string, isOxygen bool, response chan int64) {
 					counter--
 				}
 			}
-			// At the end t
+			// At the end only the filtering will be executed
 		} else if i == n-1 {
 			for _, bits = range binaries {
 				if bits[i] == filterBy {
@@ -65,6 +65,7 @@ func getRating(binaries []string, isOxygen bool, response chan int64) {
 				}
 			}
 			binaries = newBinaries
+			// Both counting and filtering will be executed
 		} else {
 			for _, bits = range binaries {
 				if bits[i] == filterBy {

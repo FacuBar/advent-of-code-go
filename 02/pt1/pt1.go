@@ -18,7 +18,7 @@ var (
 )
 
 func main() {
-	f, err := os.Open("02/data.txt")
+	f, err := os.Open("../data.txt")
 	if err != nil {
 		panic("couldnt open file")
 	}

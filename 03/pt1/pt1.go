@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	f, err := os.Open("03/data")
+	f, err := os.Open("../data")
 	if err != nil {
 		panic("couldnt open file")
 	}
