@@ -14,7 +14,7 @@ func main() {
 	scanner := bufio.NewScanner(f)
 
 	isPolymerTemplate := true
-	var polymerTemplate []byte
+	var polymerTemplate string
 	pairInsertionRules := make([][]string, 0)
 	for scanner.Scan() {
 		if scanner.Text() == "" {
@@ -23,52 +23,46 @@ func main() {
 		}
 
 		if isPolymerTemplate {
-			polymerTemplate = []byte(scanner.Text())
+			polymerTemplate = scanner.Text()
 			continue
 		}
 
 		pairInsertionRules = append(pairInsertionRules, strings.Split(scanner.Text(), " -> "))
 	}
 
-	var segment []byte
-	var sb strings.Builder
-	counter := make(map[byte]int, 0)
-	for step := 0; step < 10; step++ {
-		sb = strings.Builder{}
-		for i := 0; i < len(polymerTemplate)-1; i++ {
-			segment = polymerTemplate[i : i+2]
-			for j, rule := range pairInsertionRules {
-				if i == 0 {
-					if string(segment) == rule[0] {
-						sb.WriteByte(segment[0])
-					} else {
-						if j == len(pairInsertionRules) {
-							sb.WriteByte(segment[0])
-						}
-					}
-				}
-				if string(segment) == rule[0] {
-					sb.WriteString(rule[1])
-					sb.WriteByte(segment[1])
-				} else {
-					if j == len(pairInsertionRules) {
-						sb.WriteByte(segment[1])
-					}
-				}
+	pairCounter := make(map[string]int, 0)
+	for i := 0; i < len(polymerTemplate)-1; i++ {
+		pairCounter[string(polymerTemplate[i:i+2])]++
+	}
 
+	letterCounter := make(map[byte]int, 0)
+
+	for step := 0; step < 40; step++ {
+		tempCounter := make(map[string]int, 0)
+		for k, v := range pairCounter {
+			for _, rule := range pairInsertionRules {
+				if k == rule[0] {
+					tempCounter[string(k[0])+rule[1]] += v
+					tempCounter[rule[1]+string(k[1])] += v
+					break
+				}
 			}
 		}
-		polymerTemplate = []byte(sb.String())
+		pairCounter = tempCounter
 	}
 
-	fmt.Printf("%#v", counter)
-	for _, b := range polymerTemplate {
-		counter[byte(b)]++
+	// given that every pair overlaps the first and last letter
+	// only makes sense to count either the first or last letter
+	// of each pair; and add the first o last letter of the original
+	// template given that the extrems never change
+	for k, v := range pairCounter {
+		letterCounter[k[0]] += v
 	}
+	letterCounter[polymerTemplate[len(polymerTemplate)-1]]++
 
 	var max, min, i int
-	for k, v := range counter {
-		fmt.Println(string(k))
+
+	for _, v := range letterCounter {
 		if i == 0 {
 			max, min = v, v
 			i++
